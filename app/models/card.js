@@ -5,10 +5,10 @@ module.exports = {
   getCards() {
     return db.query('SELECT * FROM cards ORDER BY id')
   },
-  createCard({ name, masterId }) {
+  createCard({ name }) {
     return db.query(`INSERT INTO cards(name) VALUES ('${name}')`)
   },
-  updateCard({ id, name, masterId }) {
+  updateCard({ id, name }) {
     return db.query(`UPDATE cards SET name='${name}' WHERE id=${id}`)
   },
   deleteCard(id) {

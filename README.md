@@ -25,8 +25,15 @@ Un pwd générique pourra être généré avec le [helper](./app/auth/helper.js)
 ## 5. ajouter 3 methodes au model user :
 
 * `notExists(email)` pour vérifier qu'un utilisateur avec le même mail n'existe pas => utilisé à la creation de l'utilisateur (register)
-* `getUserByEmail` pour récupérer le hash du password correspondant à l'email afin de le comparer avec le password envoyé => utilisé pour le login
-* `getUserById` pour la vérification du token
+
+
+
+* `getUserByEmail`  : **Récupérer le user à partir d'un email**
+  * BUT FINAL : créer `checkCredentials` qui prend en paramètre email et password envoyés par le user afin de récupérer le hash du password correspondant à l'email pour, au final, comparer avec le password envoyé avec le pwd hashé répéré dans la BDD => utilisé pour le login
+* `getUserById` **Récupérer le user à partir d'un id** 
+  * BUT FINAL : vérification du token
+
+
 
 ## 4. modifier la creation de user
 

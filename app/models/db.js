@@ -13,6 +13,7 @@ db.connect((err) => {
 db.unwrapQuery = (sql) => {
   return db.query(sql)
   .then( results => results.rows )
+  .catch( err => Promise.reject(err) )
 }
 
 module.exports = db

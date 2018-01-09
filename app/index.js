@@ -3,25 +3,9 @@ const cors = require('cors')
 
 const app = express()
 
+// middlewares
 app.use(cors())
 app.use(express.json())
-
-const pwd = require('./auth/pwd.js')
-// test encode
-pwd
-  .encode("veggie")
-  .then(hash => console.log(hash))
-  .catch(err => err)
-// test compare
-pwd
-  .encode('veggie')
-  .then( hash => pwd.compare('bacon', hash))
-  .then( isMatch => console.log(isMatch))
-  .catch(err => console.log('error : ', err))
-
-
-  // .then(hash => pwd.comparePassword("bacon", hash))
-  // .then(trueOrFalse => console.log("Coucou je suis : ", trueOrFalse));
 
 // middleware to escape simple quotes
 // I use simple quotes in SQL queries (cf. model)
