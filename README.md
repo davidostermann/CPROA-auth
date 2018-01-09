@@ -1,148 +1,92 @@
-# postgresql 10 and JSON output
+# CPRO-auth
+authentification / role avec passport, jwt et bcrypt
 
-ref. : 
-* https://stackoverflow.com/questions/35949485/how-to-aggregate-an-array-of-json-objects-with-postgres
+## 1. install
 
-Interesting :
-* https://www.periscopedata.com/blog/the-lazy-analysts-guide-to-postgres-json.html
+npm i -S bcrypt-nodejs jsonwebtoken morgan passport passport-jwt passport-local dotenv
 
-To list missing indexes :
+## 2. password
 
-* https://stackoverflow.com/questions/970562/postgres-and-indexes-on-foreign-keys-and-primary-keys
+### Créer les fonctions d'encodage et de comparaison de password
 
-Very good article on NoSQL relation in PostgreSQL :
+cf. [auth](./app/auth/pwd.js)
 
-* **http://blog.bguiz.com/2017/postgres-many2many-sql-non-relational/**
+### Générer un pwd générique pour populer la BDD
 
-## Install DB and Adminer :
+cf. [auth helper createGenericPassoword](./app/auth/helper.js) 
 
-```
-docker-compose up
-```
-## Connection
+## 3. modifier la table user de la BDD
 
-### Go to localhost:8080
+Ajouter les champs email, pwd, role à la table `user`
+cf. [setup.sql l.38 à 60](./setup.sql)
 
-Credentials :
-``` 
-System : PostgreSQL
-Server : db
-Username : dost
-Password : changeme
-Database : tododb
-```
+Un pwd générique pourra être généré avec le [helper](./app/auth/helper.js)
 
-### Or connect via psql command line cli :
+## 5. ajouter 3 methodes au model user :
 
-```docker ps``` to retrieve psotgres container ID
+* `notExists(email)` pour vérifier qu'un utilisateur avec le même mail n'existe pas => utilisé à la creation de l'utilisateur (register)
+* `getUserByEmail` pour récupérer le hash du password correspondant à l'email afin de le comparer avec le password envoyé => utilisé pour le login
+* `getUserById` pour la vérification du token
 
-```docker exec -ti [postgres container ID] bash``` to start shell interface
+## 4. modifier la creation de user
 
-```psql tododb -U dost``` to run psql command line cli
+* Ajouter les nouveaux champs (email , pwd, roletype)
+* Verifier la présence de l'email
+* Verifier la présence du password
+* Verifier que l'utilisateur n'exite pas dejà : `notExists(email)`
+* Encoder le password avant de l'insérer dans la base
 
-## Tables Creation and Population
-  
-* via Adminer :
-  
-  * Verify you are on tododb (you see tododb as selected DB on the left)
-  * click on "run sql command"
-  * copy/paste setup.sql content
-  * click on "execute"
+## 6. Parametrer Passport
 
-# Exercices
+Créer un fichier auth/passport.js pour :
 
-## Afficher les categories avec leurs todos associées :
+* initialiser une strategie pour le login : local
+* initialiser une strategie pour les routes d'api et les routes front : jwt
+* exposer les middlewares correspondants.
 
-```sql
-SELECT c.id as id, c.name as name, t.id as tid, t.name as tname
-FROM categories as c
-JOIN todos as t ON c.id = t.category_id
-```
+## 7. créer une route pour le login
 
-### En mieux, avec aggrégation (GROUP BY et JSON_ARRAYAGG) :
+* qui utilise le middleware de passport-local
+* qui génére et renvoie le token
+* qui renvoie eventuellement les infos du user.
 
-```sql
-SELECT c.id, c.name,
-json_agg(
-  json_build_object('id', t.id, 'name', t.name)
-) as todos
-FROM categories as c 
-JOIN todos as t ON c.id = t.category_id
-GROUP BY c.id;
-```
+## 8. Créer les middlewares d'autorisation pour sécuriser les routes d'api
 
-## Afficher tous les users avec leurs todos associées :
+* Un pour limiter l'acces à l'admin
+* Un pour limiter l'acces à l'owner du compte
+* Un pour empecher un user de bouger une carte à laquelle il n'est pas associé
 
-```sql
-SELECT u.id, u.lastname, u.firstname, t.id, t.name
-FROM users as u
-INNER JOIN users_todos as ut ON ut.user_id = u.id
-INNER JOIN todos as t ON ut.todo_id = t.id;
-```
+## 9. Refacto
 
-### Et en JSON exploitable directement :
+* Créer un routes.js qui centralise les path, middleware et controller associés
+* Extraire login et register du user pour faire un controller spécialisé dans l'authentification
+* Créer un model et controller pour les action impliquant user et card afin d'alléger les model et controller de user
 
-```sql
-SELECT u.id, 
-CONCAT(u.lastname,' ', u.firstname) as name, 
-json_agg(json_build_object('id', ut.todo_id, 'name', t.name)) as todos
-FROM users as u
-JOIN users_todos as ut ON u.id = ut.user_id
-JOIN todos as t ON t.id = ut.todo_id
-GROUP BY u.id;
-```
+## 10. testes d'intégration => TODO
 
-## Afficher les categories avec pour chacune les todos et pour chaque todos les users associés
+* Avec jest et super-test ?
+* http://www.albertgao.xyz/2017/05/24/how-to-test-expressjs-with-jest-and-supertest/
+* https://www.valentinog.com/blog/testing-api-koa-jest/
+* https://medium.com/@linuk/unit-testign-rest-api-file-upload-with-jest-supertest-and-mz-in-node-ecbab9814aef
+* https://github.com/juffalow/express-jwt-example Mocha / chai mais bon exemple
+* https://github.com/Shyam-Chen/Backend-Starter-Kit intéressant
+* https://www.snip2code.com/Snippet/248401/Supertest-authenticate-with-bearer-token utilise le login pour recuperezr le token
 
-```sql
-SELECT c.id, c.name, t.id as tid, t.name as todoname, u.id as uid, 
-CONCAT(u.lastname,' ', u.firstname) as username 
-FROM categories as c
-JOIN todos as t ON c.id = t.category_id
-JOIN users_todos as ut ON t.id = ut.todo_id
-JOIN users as u ON u.id = ut.user_id
-ORDER BY c.id;
-```
+## 10. valider les inputs client sur les routes => TODO
 
-### Pas mieux sans nested SELECT :
+* avec JOI
+* ou avec express-validator
 
-```sql
-SELECT c.id, c.name, JSON_AGG( 
-JSON_BUILD_OBJECT('id', ut.todo_id, 'name', t.name, 'user', 
-JSON_BUILD_OBJECT( 'id', ut.user_id, 'name', CONCAT(u.lastname,' ', u.firstname) ) ) ) as todos
-FROM categories as c
-JOIN todos as t ON c.id = t.category_id
-JOIN users_todos as ut ON t.id = ut.todo_id
-JOIN users as u ON u.id = ut.user_id
-GROUP BY c.id
-ORDER BY c.id;
-```
+## 11. Centraliser et normaliser la gestion d'erreur => TODO
 
-### Avec nested SELECT :
-(Celle-ci, elle a été galère à faire !)
+## 12. Securiser le server avec Helmet => TODO
 
-```sql
-SELECT 
-c.id as id, 
-c.name as name, 
-JSON_AGG(
-  JSON_BUILD_OBJECT('id', t.id, 'name', t.name, 'users', utr.users)
-) as todos 
-FROM
-(
-  SELECT ut.todo_id as tid, 
-  JSON_AGG(
-    JSON_BUILD_OBJECT(
-      'id', ut.user_id, 
-      'name', CONCAT(u.lastname,' ', u.firstname)
-    )
-  ) as users
-  FROM users_todos as ut
-  JOIN users as u ON u.id = ut.user_id
-  GROUP BY ut.todo_id
-) utr
-JOIN todos as t ON utr.tid = t.id
-JOIN categories as c ON c.id = t.category_id
-GROUP BY c.id
-ORDER BY c.id;
-```
+Attention en particulier aux injection SQL. Mais il y plein d'autres attaques possibles.
+
+# 12. Mettre un trigger postgres sur :
+
+* le onDelete d'une list pour mettre toutes les user.cards de cette liste sur la liste par défaut.
+
+## 13. Pour aller plus loin dans les autorisations
+
+* https://github.com/OptimalBits/node_acl
