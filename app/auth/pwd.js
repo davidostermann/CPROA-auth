@@ -41,8 +41,10 @@ const compare = exports.compare = (pwdEnClaire, pwdEnHash) => {
  * @param {string} password - password en clair
  */
 exports.checkCredentials = (email, passwordEnClair) => {
-  return user.getUserByEmail(email)
-  .then(user => compare(passwordEnClair, user.password))
-  .then( data => { console.log("checkCredentials DATA : ", data); return data})
-  .catch(err => console.log({ err }))
+  return user
+    .getUserByEmail(email)
+    .then(user => user || Promise.reject({ error: "bad email" }))
+    .then(user => compare(passwordEnClair, user.password))
+    .then(isMatch => isMatch || Promise.reject({ error: "bad password" }))
+    .catch(err => Promise.reject(err));
 }

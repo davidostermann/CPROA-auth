@@ -1,11 +1,11 @@
 const { checkCredentials, encode, compare } = require("../auth/pwd");
 
-xtest('PWD encode', () => {
+test('PWD encode', () => {
   return encode('coucou')
   .then( hash => expect(hash).toBeDefined() )
 })
 
-xtest("PWD encode empty password generate error", () => {
+test("PWD encode empty password generate error", () => {
   return encode()
   .then( t => console.log('t : ', t))
   .catch(err => { 
@@ -13,32 +13,47 @@ xtest("PWD encode empty password generate error", () => {
   });
 });
 
-// test("PWD compare true", () => {
-//   return encode("coucou")
-//     .then(hash => compare("coucou", hash))
-//     .then(isMatch => expect(isMatch).toBe(true));
-// })
-
-xtest('PWD compare true', async () => {
-  const hash = await encode('coucou')
-  const isMatch = await compare('coucou', hash)
-  expect(isMatch).toBe(true)
+// promise style
+test("PWD compare true", () => {
+  return encode("coucou")
+    .then(hash => compare("coucou", hash))
+    .then(isMatch => expect(isMatch).toBe(true));
 })
 
-xtest("PWD compare false", () => {
+// async await style
+// test('PWD compare true', async () => {
+//   const hash = await encode('coucou')
+//   const isMatch = await compare('coucou', hash)
+//   expect(isMatch).toBe(true)
+// })
+
+test("PWD compare false", () => {
   return encode("coucou")
     .then(hash => compare("kiki", hash))
     .then(isMatch => expect(isMatch).toBe(false))
 });
 
-test('checkCredentials renvoie TRUE pour des bons identifiants', () => {
+test('checkCredentials return TRUE for good credentials', () => {
   return checkCredentials("do@do.do", "bacon")
     .then(data => expect(data).toBe(true))
-    //.catch(err => expect(err).toBeDefined());
 })
 
-test("checkCredentials renvoie FALSE pour des mauvais identifiants", () => {
-  return checkCredentials("do@do.do", "bacon")
-    //.then(data => expect(data).toBe(false))
-    .catch(err => expect(err).toBeDefined());
+test("checkCredentials reject 'bad email' for bad email", () => {
+  expect.assertions(1); // pas d'assertion => on n'est pas passé dans le catch
+  return checkCredentials("baddo@do.do", "bacon").catch(err =>
+    expect(err.error).toBe("bad email")
+  );
+  // OU
+  //return expect(checkCredentials("do@do.do", "bacon")).rejects.toEqual({error: 'bad email'})
 });
+
+test("checkCredentials reject 'bad password' for bad password", () => {
+  expect.assertions(1); // pas d'assertion => on n'est pas passé dans le catch
+  return checkCredentials("do@do.do", "badbacon").catch(err =>
+    expect(err.error).toBe("bad password")
+  );
+  // OU
+  //return expect(checkCredentials("do@do.do", "badbacon")).rejects.toEqual({error: 'bad password'});
+});
+
+// REF : https://facebook.github.io/jest/docs/en/tutorial-async.html
