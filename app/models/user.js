@@ -43,7 +43,7 @@ module.exports = {
   getUserByEmail(email) {
     return db.unwrapQuery(`SELECT * FROM users WHERE email='${email}'`)
     .then( data => data[0] || false )
-    // .then( data => data[0] || Promise.reject({error : `user with email ${email} doesn't exist`}))
+    //.then( data => data[0] || Promise.reject({error : `user with email ${email} doesn't exist`}))
     .catch( err => Promise.reject(err))
   },
   getUserById(id) {

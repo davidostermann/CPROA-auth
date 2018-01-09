@@ -1,9 +1,7 @@
 const bcrypt = require('bcrypt-nodejs')
 const user = require('../models/user')
-//return bcrypt.hashSync(pwd, 5);
 
 exports.encode = pwd => {
-
   if(!pwd) return Promise.reject({error: 'password empty'})
 
   return new Promise( (resolve, reject) => {
