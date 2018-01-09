@@ -1,11 +1,11 @@
-const { encode, compare } = require('../auth/pwd')
+const { checkCredentials, encode, compare } = require("../auth/pwd");
 
-test('PWD encode', () => {
+xtest('PWD encode', () => {
   return encode('coucou')
   .then( hash => expect(hash).toBeDefined() )
 })
 
-test("PWD encode empty password generate error", () => {
+xtest("PWD encode empty password generate error", () => {
   return encode()
   .then( t => console.log('t : ', t))
   .catch(err => { 
@@ -19,14 +19,26 @@ test("PWD encode empty password generate error", () => {
 //     .then(isMatch => expect(isMatch).toBe(true));
 // })
 
-test('PWD compare true', async () => {
+xtest('PWD compare true', async () => {
   const hash = await encode('coucou')
   const isMatch = await compare('coucou', hash)
   expect(isMatch).toBe(true)
 })
 
-test("PWD compare false", () => {
+xtest("PWD compare false", () => {
   return encode("coucou")
     .then(hash => compare("kiki", hash))
     .then(isMatch => expect(isMatch).toBe(false))
+});
+
+test('checkCredentials renvoie TRUE pour des bons identifiants', () => {
+  return checkCredentials("do@do.do", "bacon")
+    .then(data => expect(data).toBe(true))
+    //.catch(err => expect(err).toBeDefined());
+})
+
+test("checkCredentials renvoie FALSE pour des mauvais identifiants", () => {
+  return checkCredentials("do@do.do", "bacon")
+    //.then(data => expect(data).toBe(false))
+    .catch(err => expect(err).toBeDefined());
 });
