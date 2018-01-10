@@ -10,9 +10,10 @@ test("getUsers has at least one item", () => {
     .then(results => expect(results.length).toBeGreaterThan(0));
 });
 
-xtest("getUsers return 8 items", () => {
-  return user.getUsers()
-  .then(results => expect(results.length).toBe(8));
+test("getUsers return an array", () => {
+  return user
+    .getUsers()
+    .then(results => expect(Array.isArray(results)).toBe(true));
 });
 
 test('noExists return true for coucou@coucou.fr', () => {

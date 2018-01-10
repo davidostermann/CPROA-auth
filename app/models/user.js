@@ -6,13 +6,9 @@ const user = {};
 
 user.getUsers = () => {
   return db.unwrapQuery("SELECT * FROM users ORDER BY id");
-  //query => {rows[user1, user2, ...]}
-  // unwrapQuery => [user1, user2, ...]
 };
 
 user.createUser = ({ firstname, lastname, email, password }) => {
-  console.log("password : ", password);
-
   return encode(password).then(hashPwd =>
     db.query(`
   INSERT INTO users(firstname, lastname, email, password, roletype)
