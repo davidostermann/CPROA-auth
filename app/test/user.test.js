@@ -10,7 +10,7 @@ test("getUsers has at least one item", () => {
     .then(results => expect(results.length).toBeGreaterThan(0));
 });
 
-test("getUsers return 8 items", () => {
+xtest("getUsers return 8 items", () => {
   return user.getUsers()
   .then(results => expect(results.length).toBe(8));
 });
@@ -39,3 +39,8 @@ test("getUserById return a user object", () => {
 test("getUserById return an error for fake ID", () => {
   return user.getUserById(999).then( data => expect(data).toBe(false))
 });
+
+test('createUser insert un user', () => {
+  return user.createUser({firstname: 'Alexandra', lastname: 'Leveille', email: 'al@do.do', password: 'coucou'})
+  .then( data => expect(data.rowCount).toBe(1))
+})

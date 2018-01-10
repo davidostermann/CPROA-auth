@@ -28,21 +28,3 @@ const compare = exports.compare = (pwdEnClaire, pwdEnHash) => {
     });
   })
 }
-
-/**
- * 
- *  
- * verifie que le password passé en paramètre est le même que le password stocké en BDD
- * Step 1 : récupérer le user associé à l'email : getUserByEmail
- * Step2 : Comparer le password du user avec le password passé en parametre
- * @param {string} email 
- * @param {string} password - password en clair
- */
-exports.checkCredentials = (email, passwordEnClair) => {
-  return user
-    .getUserByEmail(email)
-    .then(user => user || Promise.reject({ error: "bad email" }))
-    .then(user => compare(passwordEnClair, user.password))
-    .then(isMatch => isMatch || Promise.reject({ error: "bad password" }))
-    .catch(err => Promise.reject(err));
-}

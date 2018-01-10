@@ -1,4 +1,5 @@
-const { checkCredentials, encode, compare } = require("../auth/pwd");
+const { encode, compare } = require("../auth/pwd");
+const { checkCredentials } = require('../auth/login')
 
 test('PWD encode', () => {
   return encode('coucou')
@@ -26,6 +27,10 @@ test("PWD compare true", () => {
 //   const isMatch = await compare('coucou', hash)
 //   expect(isMatch).toBe(true)
 // })
+
+// test("PWD compare log", () => {
+//   return encode("coucou").then( hash => console.log(hash))
+// });
 
 test("PWD compare false", () => {
   return encode("coucou")

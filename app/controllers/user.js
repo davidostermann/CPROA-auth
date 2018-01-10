@@ -1,5 +1,6 @@
 const express = require('express')
 const model = require('../models/user')
+const { authCredentials } = require('../auth/login')
 
 module.exports = express.Router()
   .get('/', (req, res) => {
@@ -8,10 +9,11 @@ module.exports = express.Router()
       .catch(err => res.json(err))
   })
   .post('/', (req, res) => {
-    const { lastname, firstname } = req.body;
-    model.createUser({ firstname, lastname })
+    const { lastname, firstname, email, password } = req.body;
+    model
+      .createUser({ firstname, lastname, email, password })
       .then(result => res.send(result))
-      .catch(err => console.log(err))
+      .catch(err => console.log(err));
   })
   /**
    * Move a card
@@ -46,3 +48,16 @@ module.exports = express.Router()
       .then(result => res.json(result))
       .catch(err => res.json(err))
   })
+  .post('/login', authCredentials, (req, res) => {
+    // ici on appelle checkCredentials
+    //checkCredentials(req.body.email, req.body.password)
+    // .then( () => res.send('LOGIN REUSSI'))
+    // .catch( err => res.send(err))
+    res.send('LOGIN REUSSI')
+  })
+
+  /**
+   * Ajouter une route /user/login
+   */
+
+  
