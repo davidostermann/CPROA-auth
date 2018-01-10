@@ -25,8 +25,6 @@ const checkCredentials = (
       return isMatch;
     })
     .then(isMatch => {
-      
-      
       return isMatch ? done(null, u) : done(null, false, {
           error: "bad password"
         });
