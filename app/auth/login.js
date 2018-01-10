@@ -12,18 +12,10 @@ const checkCredentials = (
   return user
     .getUserByEmail(email)
     .then(user => {
-      console.log("user : ", user);
-      return user;
-    })
-    .then(user => {
       u = user;
       return user || done(null, false, { error: "bad email" });
     })
     .then(user => compare(passwordEnClair, user.password))
-    .then(isMatch => {
-      console.log("isMatch : ", isMatch);
-      return isMatch;
-    })
     .then(isMatch => {
       return isMatch ? done(null, u) : done(null, false, {
           error: "bad password"
