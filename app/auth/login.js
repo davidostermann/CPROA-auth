@@ -27,9 +27,15 @@ const checkCredentials = (email, password) => {
     )
     .catch(err => Promise.reject(err));
 };
-// pour les testes
+// pour les tests
 exports.checkCredentials = checkCredentials;
 
+/**
+ * Middleware pour express (cf. http://expressjs.com/fr/guide/using-middleware.html)
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
 exports.checkCredentialsMiddleware = (req, res, next) => {
   const { email, password } = req.body;
   checkCredentials(email, password)

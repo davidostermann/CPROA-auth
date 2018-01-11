@@ -1,6 +1,7 @@
 const express = require('express')
 const model = require('../models/user')
 const { checkCredentialsMiddleware } = require("../auth/login");
+const { generateToken, checkTokenMiddleware } = require("../auth/jwt");
 
 module.exports = express
   .Router()
@@ -60,7 +61,17 @@ module.exports = express
     // .then( () => res.send('LOGIN REUSSI'))
     // .catch( err => res.send(err))
 
-    res.json(req.user);
+    // Grâce au middleware checkCredentialsMiddleware, on récupere le user
+    res
+      .status(200)
+      .json({
+        token: "JWT " + generateToken(req.user),
+        user: {
+          id: req.user.id,
+          firstName: req.user.firstname,
+          lastName: req.user.lastname
+        }
+      });
   });
 
   /**
