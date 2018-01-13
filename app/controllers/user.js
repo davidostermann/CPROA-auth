@@ -62,16 +62,14 @@ module.exports = express
     // .catch( err => res.send(err))
 
     // Grâce au middleware checkCredentialsMiddleware, on récupere le user
-    res
-      .status(200)
-      .json({
-        token: "JWT " + generateToken(req.user),
-        user: {
-          id: req.user.id,
-          firstName: req.user.firstname,
-          lastName: req.user.lastname
-        }
-      });
+    res.json({
+      token: "JWT " + generateToken(req.user),
+      user: {
+        id: req.user.id,
+        firstName: req.user.firstname,
+        lastName: req.user.lastname
+      }
+    });
   });
 
   /**

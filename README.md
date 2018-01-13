@@ -53,7 +53,14 @@ Créer un fichier auth/passport.js pour :
 
 ## 7. créer une route pour le login
 
-* qui utilise le middleware de passport-local
+* qui utilise le middleware de passport-local OU PAS
+
+  0. Dans le controlleur de la route login, générer un token (Ce code est dejà ecrit !!)
+  1. Ajouter le middleware checkTokenMiddleware sur une route à protéger
+  2. Verifier via postman que la route est bien protégé
+  3. générer un token avec POSTMAN (comment faire... au fait c'est très simple)
+  3. Ajouter un token dans la requete pour être autorisé à accéder à la route
+
 * qui génére et renvoie le token
 * qui renvoie eventuellement les infos du user.
 

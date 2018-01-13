@@ -19,6 +19,7 @@ exports.generateToken = user => {
 /**
  * Extrait le token du header
  * Autrement, vous pouvez aussi utiliser : https://github.com/tkellen/js-express-bearer-token
+ * regexp from https://github.com/themikenicholson/passport-jwt/blob/master/lib/auth_header.js
  * @param {*} headerValue 
  */
 const extractBearerToken = (headerValue) => {
