@@ -11,7 +11,7 @@ user.getUsers = () => {
 user.createUser = ({ firstname, lastname, email, password }) => {
   return encode(password).then(hashPwd =>
     db.query(`
-  INSERT INTO users(firstname, lastname, email, password, roletype)
+  INSERT INTO users(firstname, lastname, email, password, role)
   VALUES ('${firstname}', '${lastname}', '${email}', '${hashPwd}', 'user')`)
   );
 };

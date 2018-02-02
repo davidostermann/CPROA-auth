@@ -41,11 +41,11 @@ CREATE TABLE users
   firstname varchar(255),
   email varchar(255),
   password varchar(255),
-  roletype varchar(255)
+  role varchar(255)
 );
 
 INSERT INTO users
-  (firstname, lastname, email, password, roletype)
+  (firstname, lastname, email, password, role)
 VALUES
   ('David', 'Ostermann', 'do@do.do', '$2a$05$CRbjF.1YEYHrK2eNx/tPZuNVQlc48fg8Z8j4fU67x3P6cLwA3pE.W', 'admin'),
   ('Faustino', 'Kialungila', 'fk@do.do', '$2a$05$CRbjF.1YEYHrK2eNx/tPZuNVQlc48fg8Z8j4fU67x3P6cLwA3pE.W', 'user'),

@@ -11,8 +11,8 @@ const JWT_SECRET = 'coucou'
  * @param {Object} userInfo
  */
 exports.generateToken = user => {
-  const {id, email, roletype} = user
-  const userInfo = { id, email, role: roletype }
+  const {id, email, role} = user
+  const userInfo = { id, email, role: role }
   return jwt.sign(userInfo, JWT_SECRET, { expiresIn: 10800 });
 }
 

@@ -37,7 +37,7 @@ Un pwd générique pourra être généré avec le [helper](./app/auth/helper.js)
 
 ## 4. modifier la creation de user
 
-* Ajouter les nouveaux champs (email , pwd, roletype)
+* Ajouter les nouveaux champs (email , pwd, role)
 * Verifier la présence de l'email
 * Verifier la présence du password
 * Verifier que l'utilisateur n'exite pas dejà : `notExists(email)`
